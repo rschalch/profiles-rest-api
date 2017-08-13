@@ -1,7 +1,16 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
+from rest_framework.routers import DefaultRouter
 
-from profiles_rest_api.views import HelloAPIView
+from profiles_rest_api.views import HelloAPIView, HelloViewSet
+
+router = DefaultRouter()
+router.register(
+    'hello-viewset',
+    HelloViewSet,
+    base_name='hello-viewset'
+)
 
 urlpatterns = [
-    url(r'hello/', HelloAPIView.as_view())
+    url(r'hello/', HelloAPIView.as_view()),
+    url(r'', include(router.urls))
 ]
