@@ -1,11 +1,15 @@
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from profiles_rest_api.serializers import HelloSerializer
 
 
 class HelloAPIView(APIView):
     """
     Test APIView
     """
+    serializer_class = HelloSerializer
 
     def get(self, request, format=None):
         """
@@ -23,3 +27,22 @@ class HelloAPIView(APIView):
             'an_apiview': an_apiview
         }
         )
+
+    def post(self, request):
+        serializer = HelloSerializer(data=request.data)
+
+        if serializer.is_valid():
+            name = serializer.data.get('name')
+            message = 'Hello {}'.format(name)
+            return Response({'message': message})
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk=None):
+        return Response({'method': 'put'})
+
+    def patch(self, request, pk=None):
+        return Response({'method': 'patch'})
+
+    def delete(self, request, pk=None):
+        return Response({'method': 'delete'})
