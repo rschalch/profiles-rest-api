@@ -2,16 +2,18 @@ from rest_framework import status, filters
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, \
+    IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet, ModelViewSet
 
-from profiles_rest_api.models import UserProfile
-from profiles_rest_api.permissions import UpdateOwnProfile
+from profiles_rest_api.models import UserProfile, ProfileFeedItem
+from profiles_rest_api.permissions import UpdateOwnProfile, PostOwnStatus
 from profiles_rest_api.serializers import (
     HelloSerializer,
-    UserProfileSerializer
-)
+    UserProfileSerializer,
+    ProfileFeedItemSerializer)
 
 class HelloAPIView(APIView):
     """
@@ -128,3 +130,14 @@ class LoginViewSet(ViewSet):
 
         return ObtainAuthToken().post(request)
 
+
+class UserProfileFeedViewSet(ModelViewSet):
+
+    authentication_classes = (TokenAuthentication, )
+    serializer_class = ProfileFeedItemSerializer
+    queryset = ProfileFeedItem.objects.all()
+    permission_classes = (PostOwnStatus, IsAuthenticated)
+
+    def perform_create(self, serializer):
+        """ Sets the user profile to the logged in user """
+        serializer.save(user_profile=self.request.user)

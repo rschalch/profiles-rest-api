@@ -5,12 +5,13 @@ from profiles_rest_api.views import (
     HelloAPIView,
     HelloViewSet,
     UserProfileViewSet,
-    LoginViewSet)
+    LoginViewSet, UserProfileFeedViewSet)
 
 
 router = DefaultRouter()
 router.register('hello-viewset', HelloViewSet, base_name='hello-viewset')
 router.register('profile', UserProfileViewSet)
+router.register('feed', UserProfileFeedViewSet)
 router.register('login', LoginViewSet, base_name='login')
 
 
